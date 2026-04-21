@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>식습관 유형 테스트</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    .question { margin: 20px 0; }
+    button { margin: 5px; padding: 10px 20px; cursor: pointer; }
+    #result { font-size: 20px; margin-top: 30px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>🍽️ 식습관 유형 테스트</h1>
+<div id="quiz"></div>
+<div id="result"></div>
+
+<script>
+const questions = [
+  { q: "아침을 먹는다", a: "건강형", b: "야식형" },
+  { q: "패스트푸드를 자주 먹는다", a: "야식형", b: "건강형" },
+  { q: "물을 자주 마신다", a: "건강형", b: "즉흥형" },
+  { q: "야식을 자주 먹는다", a: "야식형", b: "건강형" },
+  { q: "식사 시간이 일정하다", a: "건강형", b: "즉흥형" }
+];
+
+let index = 0;
+let score = { "건강형": 0, "야식형": 0, "즉흥형": 0 };
+
+function showQuestion() {
+  if (index >= questions.length) {
+    showResult();
+    return;
+  }
+
+  const q = questions[index];
+  document.getElementById("quiz").innerHTML = `
+    <div class="question">
+      <p>${q.q}</p>
+      <button onclick="answer('a')">O</button>
+      <button onclick="answer('b')">X</button>
+    </div>
+  `;
+}
+
+function answer(choice) {
+  const q = questions[index];
+  score[q[choice]]++;
+  index++;
+  showQuestion();
+}
+
+function showResult() {
+  let resultType = Object.keys(score).reduce((a, b) => score[a] > score[b] ? a : b);
+
+  let message = "";
+  if (resultType === "건강형") message = "🥗 균형 잡힌 식습관을 가진 건강형!";
+  if (resultType === "야식형") message = "🍗 밤이 되면 강해지는 야식형!";
+  if (resultType === "즉흥형") message = "🎲 끌리는 대로 먹는 즉흥형!";
+
+  document.getElementById("quiz").innerHTML = "";
+  document.getElementById("result").innerText = message;
+}
+
+showQuestion();
+</script>
+
+</body>
+</html>
