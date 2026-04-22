@@ -22,7 +22,6 @@ body {
   background: rgba(0,0,0,0.4);
   top: 0;
   left: 0;
-  z-index: 0;
 }
 
 #header, #quiz {
@@ -32,7 +31,7 @@ body {
 
 #header {
   background: rgba(255,255,255,0.9);
-  padding: 20px 30px;
+  padding: 20px;
   border-radius: 20px;
   display: inline-block;
   margin-top: 40px;
@@ -47,17 +46,8 @@ body {
   max-width: 500px;
 }
 
-.progress-text {
-  background: #2e7d32;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  display: inline-block;
-  margin-bottom: 15px;
-}
-
 .question {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
   margin-bottom: 20px;
 }
@@ -70,7 +60,7 @@ body {
 .choice-card {
   flex: 1;
   border-radius: 20px;
-  padding: 15px;
+  padding: 20px;
   cursor: pointer;
   transition: 0.2s;
 }
@@ -87,26 +77,10 @@ body {
   font-weight: bold;
 }
 
-.choice-text {
-  margin-top: 10px;
-  font-weight: bold;
-}
-
 /* 결과 */
-.result-title {
-  font-size: 26px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.result-desc {
-  margin-bottom: 10px;
-}
-
-.result-tip {
-  color: #666;
-  margin-bottom: 20px;
-}
+.result-title { font-size: 26px; font-weight: bold; margin-bottom: 10px; }
+.result-desc { margin-bottom: 10px; }
+.result-tip { color: #666; margin-bottom: 20px; }
 
 .result-btn {
   padding: 10px 20px;
@@ -148,7 +122,6 @@ let index = 0;
 let score = {"건강형":0,"야식형":0,"즉흥형":0,"편의점형":0};
 
 function showQuestion(){
-
   if(index >= questions.length){
     showResult();
     return;
@@ -156,18 +129,15 @@ function showQuestion(){
 
   document.getElementById("quiz").innerHTML = `
     <div id="card">
-      <div class="progress-text">Q ${index+1} / ${questions.length}</div>
-      <div class="question">${questions[index].q}</div>
+      <div class="question">Q ${index+1}. ${questions[index].q}</div>
 
       <div class="choices">
         <div class="choice-card choice-a" onclick="answer('a')">
           <div class="choice-label">O</div>
-          <div class="choice-text">예</div>
         </div>
 
         <div class="choice-card choice-b" onclick="answer('b')">
           <div class="choice-label">X</div>
-          <div class="choice-text">아니오</div>
         </div>
       </div>
     </div>
@@ -184,27 +154,12 @@ function showResult(){
 
   let result = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
 
-  /* 🔥 구글폼 값 매핑 (여기 중요) */
-  const formMap = {
-    "건강형": "건강형",
-    "야식형": "야식형",
-    "즉흥형": "즉흥형",
-    "편의점형": "편의점형"
-  };
+  /* 🔥 구글폼 전송 (이미지 방식) */
+  const formValue = result;
 
-  const formValue = formMap[result];
-
-  console.log("보내는 값:", formValue);
-
-  /* 🔥 구글폼 전송 */
-  fetch("https://docs.google.com/forms/d/e/1FAIpQLSdGvPsLWdKeKTG_FabZIpUI1L8xzPcCKTn2pJISBLH7hsuwdw/formResponse", {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: "entry.1385024519=" + encodeURIComponent(formValue)
-  });
+  const img = new Image();
+  img.src = "https://docs.google.com/forms/d/e/1FAIpQLSdGvPsLWdKeKTG_FabZIpUI1L8xzPcCKTn2pJISBLH7hsuwdw/formResponse?entry.1385024519="
+            + encodeURIComponent(formValue);
 
   let data = {
     "건강형": {title:"🥗 건강지향형",color:"#2e7d32",desc:"균형 잡힌 식습관",tip:"지금처럼 유지 👍"},
