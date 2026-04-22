@@ -1,69 +1,238 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>식습관 유형 테스트</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    .question { margin: 20px 0; }
-    button { margin: 5px; padding: 10px 20px; cursor: pointer; }
-    #result { font-size: 20px; margin-top: 30px; font-weight: bold; }
-  </style>
+<meta charset="UTF-8">
+<title>식습관 테스트</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: sans-serif;
+  text-align: center;
+  background-image: url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1400');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+#header, #quiz {
+  position: relative;
+  z-index: 1;
+}
+
+#header {
+  background: rgba(255,255,255,0.9);
+  padding: 20px 30px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-top: 40px;
+}
+
+#card {
+  background: rgba(255,255,255,0.95);
+  margin: 30px auto;
+  padding: 30px;
+  border-radius: 25px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.progress-text {
+  background: #2e7d32;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+.question {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.choices {
+  display: flex;
+  gap: 15px;
+}
+
+.choice-card {
+  flex: 1;
+  border-radius: 20px;
+  padding: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.choice-a { border: 3px solid #2e7d32; }
+.choice-b { border: 3px solid #ef6c00; }
+
+.choice-card:hover {
+  transform: scale(1.05);
+}
+
+.choice-label {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.choice-text {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* 결과 */
+.result-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.result-desc {
+  margin-bottom: 10px;
+}
+
+.result-tip {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.result-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-<h1>🍽️ 식습관 유형 테스트</h1>
+<div class="overlay"></div>
+
+<div id="header">
+  <h1>🍽️ 식습관 유형 테스트</h1>
+</div>
+
 <div id="quiz"></div>
-<div id="result"></div>
 
 <script>
+
 const questions = [
-  { q: "아침을 먹는다", a: "건강형", b: "야식형" },
-  { q: "패스트푸드를 자주 먹는다", a: "야식형", b: "건강형" },
-  { q: "물을 자주 마신다", a: "건강형", b: "즉흥형" },
-  { q: "야식을 자주 먹는다", a: "야식형", b: "건강형" },
-  { q: "식사 시간이 일정하다", a: "건강형", b: "즉흥형" }
+{q:"아침을 먹는다",a:"건강형",b:"야식형"},
+{q:"하루 3끼를 먹는다",a:"건강형",b:"즉흥형"},
+{q:"야식을 자주 먹는다",a:"야식형",b:"건강형"},
+{q:"식사 시간이 일정하다",a:"건강형",b:"즉흥형"},
+{q:"편의점 음식 자주 먹는다",a:"편의점형",b:"건강형"},
+{q:"배고프지 않아도 먹는다",a:"즉흥형",b:"건강형"},
+{q:"탄산음료 자주 마신다",a:"야식형",b:"건강형"},
+{q:"채소/과일 매일 먹는다",a:"건강형",b:"편의점형"},
+{q:"배달음식 자주 먹는다",a:"야식형",b:"건강형"},
+{q:"끼니를 자주 거른다",a:"즉흥형",b:"건강형"}
 ];
 
 let index = 0;
-let score = { "건강형": 0, "야식형": 0, "즉흥형": 0 };
+let score = {"건강형":0,"야식형":0,"즉흥형":0,"편의점형":0};
 
-function showQuestion() {
-  if (index >= questions.length) {
+function showQuestion(){
+
+  if(index >= questions.length){
     showResult();
     return;
   }
 
-  const q = questions[index];
   document.getElementById("quiz").innerHTML = `
-    <div class="question">
-      <p>${q.q}</p>
-      <button onclick="answer('a')">O</button>
-      <button onclick="answer('b')">X</button>
+    <div id="card">
+      <div class="progress-text">Q ${index+1} / ${questions.length}</div>
+      <div class="question">${questions[index].q}</div>
+
+      <div class="choices">
+        <div class="choice-card choice-a" onclick="answer('a')">
+          <div class="choice-label">O</div>
+          <div class="choice-text">예</div>
+        </div>
+
+        <div class="choice-card choice-b" onclick="answer('b')">
+          <div class="choice-label">X</div>
+          <div class="choice-text">아니오</div>
+        </div>
+      </div>
     </div>
   `;
 }
 
-function answer(choice) {
-  const q = questions[index];
-  score[q[choice]]++;
+function answer(choice){
+  score[questions[index][choice]]++;
   index++;
   showQuestion();
 }
 
-function showResult() {
-  let resultType = Object.keys(score).reduce((a, b) => score[a] > score[b] ? a : b);
+function showResult(){
 
-  let message = "";
-  if (resultType === "건강형") message = "🥗 균형 잡힌 식습관을 가진 건강형!";
-  if (resultType === "야식형") message = "🍗 밤이 되면 강해지는 야식형!";
-  if (resultType === "즉흥형") message = "🎲 끌리는 대로 먹는 즉흥형!";
+  let result = Object.keys(score).reduce((a,b)=>score[a]>score[b]?a:b);
 
-  document.getElementById("quiz").innerHTML = "";
-  document.getElementById("result").innerText = message;
+  /* 🔥 구글폼 값 매핑 (여기 중요) */
+  const formMap = {
+    "건강형": "건강형",
+    "야식형": "야식형",
+    "즉흥형": "즉흥형",
+    "편의점형": "편의점형"
+  };
+
+  const formValue = formMap[result];
+
+  console.log("보내는 값:", formValue);
+
+  /* 🔥 구글폼 전송 */
+  fetch("https://docs.google.com/forms/d/e/1FAIpQLSdGvPsLWdKeKTG_FabZIpUI1L8xzPcCKTn2pJISBLH7hsuwdw/formResponse", {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: "entry.1385024519=" + encodeURIComponent(formValue)
+  });
+
+  let data = {
+    "건강형": {title:"🥗 건강지향형",color:"#2e7d32",desc:"균형 잡힌 식습관",tip:"지금처럼 유지 👍"},
+    "야식형": {title:"🍗 야식러형",color:"#ef6c00",desc:"야식 습관 있음",tip:"야식 줄이기!"},
+    "즉흥형": {title:"🎲 즉흥형",color:"#6a1b9a",desc:"식사 불규칙",tip:"시간 정하기!"},
+    "편의점형": {title:"🏪 편의점형",color:"#0277bd",desc:"간편식 위주",tip:"집밥 도전!"}
+  };
+
+  let r = data[result];
+
+  document.getElementById("quiz").innerHTML = `
+    <div id="card">
+      <div class="result-title">${r.title}</div>
+      <div class="result-desc">${r.desc}</div>
+      <div class="result-tip">💡 ${r.tip}</div>
+      <button class="result-btn" style="background:${r.color}" onclick="restart()">다시하기</button>
+    </div>
+  `;
+}
+
+function restart(){
+  index=0;
+  score={"건강형":0,"야식형":0,"즉흥형":0,"편의점형":0};
+  showQuestion();
 }
 
 showQuestion();
+
 </script>
 
 </body>
